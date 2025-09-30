@@ -13,20 +13,44 @@
   <link rel="stylesheet" href="{{ asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
+        <script>
+        @if(session('success'))
+            Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '{{ session('error') }}',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Try Again'
+            });
+        @endif
+    </script>
   <!-- /.login-logo -->
   <div class="card card-outline card-primary">
     <div class="card-header text-center">
-      <a href="index2.html" class="h1"><b>Admin</b>LTE</a>
+      <a href="index2.html" class="h1" style="font-size: 16px"><b>OOP</b><br> MODULE MANAGEMENT SYSTEM</a>
     </div>
     <div class="card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
+      {{-- <p class="login-box-msg">Sign in to start your session</p> --}}
 
-      <form action="index3.html" method="post">
+      <form action="{{ url('/login') }}" method="post">
+        @csrf
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Email">
+          <input type="email" class="form-control" placeholder="Email" name="email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -34,7 +58,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Password">
+          <input type="password" class="form-control" placeholder="Password" name="password">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -51,28 +75,19 @@
             </div>
           </div>
           <!-- /.col -->
-          <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-          </div>
+        <button type="submit" id="loginBtn" class="btn btn-primary btn-block">
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            <span class="btn-text">Sign In</span>
+        </button>
+
           <!-- /.col -->
         </div>
       </form>
 
-      <div class="social-auth-links text-center mt-2 mb-3">
-        <a href="#" class="btn btn-block btn-primary">
-          <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-        </a>
-        <a href="#" class="btn btn-block btn-danger">
-          <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-        </a>
-      </div>
       <!-- /.social-auth-links -->
 
       <p class="mb-1">
         <a href="forgot-password.html">I forgot my password</a>
-      </p>
-      <p class="mb-0">
-        <a href="register.html" class="text-center">Register a new membership</a>
       </p>
     </div>
     <!-- /.card-body -->
@@ -80,6 +95,14 @@
   <!-- /.card -->
 </div>
 <!-- /.login-box -->
+<script>
+  document.querySelector("form").addEventListener("submit", function() {
+    let btn = document.getElementById("loginBtn");
+    btn.disabled = true; // disable button
+    btn.querySelector(".spinner-border").classList.remove("d-none");
+    btn.querySelector(".btn-text").textContent = " Logging in...";
+  });
+</script>
 
 <!-- jQuery -->
 <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
