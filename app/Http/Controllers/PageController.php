@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,6 +53,8 @@ class PageController extends Controller
     }
     public function index()
     {
-        return view('auth.index');
+        $notes = Note::latest()->get();
+        $noteCount = $notes->count();
+        return view('auth.index', compact('notes', 'noteCount'));
     }
 }
