@@ -29,23 +29,23 @@ class PageController extends Controller
                 return redirect()->intended('/index')->with('success', 'Login successful! Welcome back.');
             }
             // Log::warning('Login attempt failed', [
-            //     'username' => $request->username,
+            //     'email' => $request->email,
             //     'ip' => $request->ip(),
             //     'user_agent' => $request->userAgent(),
             //     'time' => now(),
             // ]);
 
-            return back()->with('error', 'Invalid username or password.')
-                        ->onlyInput('username');
+            return back()->with('error', 'Invalid email or password.')
+                        ->onlyInput('email');
         } catch (Exception $e) {
-            // Log::error('Login error', [
-            //     'username' => $request->username,
-            //     'ip' => $request->ip(),
-            //     'user_agent' => $request->userAgent(),
-            //     'error_message' => $e->getMessage(),
-            //     'stack' => $e->getTraceAsString(),
-            //     'time' => now(),
-            // ]);
+            Log::error('Login error', [
+                'email' => $request->email,
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'error_message' => $e->getMessage(),
+                'stack' => $e->getTraceAsString(),
+                'time' => now(),
+            ]);
 
             return back()->with('error', 'Invalid email or password.');
         }
