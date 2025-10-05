@@ -28,6 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
     <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
@@ -131,6 +132,78 @@
       "responsive": true,
     });
   });
+document.addEventListener('DOMContentLoaded', function () {
+
+    // === 1️⃣ Handle session-based alerts (after redirects) ===
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: "{{ session('success') }}",
+            timer: 2500,
+            showConfirmButton: false
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: "{{ session('error') }}",
+            timer: 3000,
+            showConfirmButton: true
+        });
+    @endif
+
+    @if(session('warning'))
+        Swal.fire({
+            icon: 'warning',
+            title: 'Warning',
+            text: "{{ session('warning') }}",
+            timer: 3000,
+            showConfirmButton: true
+        });
+    @endif
+
+
+    // === 2️⃣ Global AJAX handler for success/error responses ===
+    $(document).ajaxSuccess(function(event, xhr, settings, response) {
+        if (response && response.status === 'success') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: response.message || 'Operation completed successfully.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else if (response && response.status === 'error') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: response.message || 'Something went wrong.',
+            });
+        }
+    });
+
+    $(document).ajaxError(function(event, jqxhr) {
+        let res = jqxhr.responseJSON;
+        if (res && res.errors) {
+            let messages = Object.values(res.errors).flat().join('\n');
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: messages
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Request Failed',
+                text: res?.message || 'Unexpected error occurred.'
+            });
+        }
+    });
+
+});
 </script>
 </body>
 </html>
