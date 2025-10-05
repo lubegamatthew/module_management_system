@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\User;
+use App\Models\Group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class GroupController extends Controller
@@ -76,6 +78,44 @@ class GroupController extends Controller
                 ->with('error', 'An unexpected error occurred. Please try again.');
         }
     }
+    public function createGroup()
+    {
+        $usedUserIds = DB::table('group_user')->pluck('user_id')->toArray();
+        $members = User::whereNotIn('id', $usedUserIds)->get(['id', 'name']);
+        return view('groups.create_group', compact('members'));
+    }
 
+    public function storeGroup(Request $request)
+    {
+        $validated = $request->validate([
+            'group_name' => 'required|string|max:255',
+            'members' => 'required|array|min:1',
+            'leader' => 'required|exists:users,id',
+        ]);
+
+        $group = Group::create([
+            'name' => $validated['group_name'],
+            'leader_id' => $validated['leader'],
+            'created_by' => auth()->id(), 
+        ]);
+
+        $group->members()->sync($validated['members']);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Group created successfully!'
+            ]);
+        }
+
+        return redirect()->route('groups.view')->with('success', 'Group created successfully!');
+    }
+    public function viewGroups()
+    {
+        $groups = Group::with(['leader', 'creator', 'members'])
+               ->orderBy('created_at', 'asc')
+               ->get();
+        return view('groups.view_groups', compact('groups'));
+    }
 
 }

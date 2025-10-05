@@ -32,6 +32,10 @@
     <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
   <style>
     body {
         font-family: 'Poppins', sans-serif;
@@ -116,6 +120,9 @@
 <script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
 <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+
+<!-- Select2 -->
+<script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
 <script>
   $(function () {
     $("#example1").DataTable({
@@ -134,7 +141,7 @@
   });
 document.addEventListener('DOMContentLoaded', function () {
 
-    // === 1️⃣ Handle session-based alerts (after redirects) ===
+    // ===Handle session-based alerts (after redirects) ===
     @if(session('success'))
         Swal.fire({
             icon: 'success',
@@ -166,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
     @endif
 
 
-    // === 2️⃣ Global AJAX handler for success/error responses ===
+    // ===Global AJAX handler for success/error responses ===
     $(document).ajaxSuccess(function(event, xhr, settings, response) {
         if (response && response.status === 'success') {
             Swal.fire({
@@ -203,6 +210,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+});
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
 });
 </script>
 </body>

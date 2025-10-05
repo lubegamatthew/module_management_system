@@ -20,5 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/groups/members/all', [GroupController::class, 'viewMembers'])->name('members.view');
     Route::get('/groups/members/add', [GroupController::class, 'createMember'])->name('members.add');
     Route::post('/groups/members/save', [GroupController::class, 'saveMember'])->name('members.save');
+    Route::get('/groups/create', [GroupController::class, 'createGroup'])->name('groups.create');
+    Route::post('/groups/store', [GroupController::class, 'storeGroup'])->name('groups.store');
+    Route::get('/groups/view', [GroupController::class, 'viewGroups'])->name('groups.view');
 });
 
