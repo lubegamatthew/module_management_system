@@ -113,9 +113,33 @@ class GroupController extends Controller
     public function viewGroups()
     {
         $groups = Group::with(['leader', 'creator', 'members'])
-               ->orderBy('created_at', 'asc')
-               ->get();
-        return view('groups.view_groups', compact('groups'));
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+        $members = User::whereDoesntHave('groups')->get(['id', 'name']);
+
+        // Or if you want ALL users to appear in the modal (even if already in groups):
+        // $members = User::all(['id', 'name']);
+
+        return view('groups.view_groups', compact('groups', 'members'));
+    }
+    public function updateGroup(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'group_name' => 'required|string|max:255',
+            'members' => 'required|array|min:1',
+            'leader' => 'required|exists:users,id',
+        ]);
+
+        $group = Group::findOrFail($id);
+        $group->update([
+            'name' => $validated['group_name'],
+            'leader_id' => $validated['leader'],
+        ]);
+
+        $group->members()->sync($validated['members']);
+
+        return redirect()->route('groups.view')->with('success', 'Group updated successfully!');
     }
 
 }

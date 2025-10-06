@@ -23,5 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/groups/create', [GroupController::class, 'createGroup'])->name('groups.create');
     Route::post('/groups/store', [GroupController::class, 'storeGroup'])->name('groups.store');
     Route::get('/groups/view', [GroupController::class, 'viewGroups'])->name('groups.view');
+    Route::put('/groups/{id}', [GroupController::class, 'updateGroup'])->name('groups.update');
+
 });
 

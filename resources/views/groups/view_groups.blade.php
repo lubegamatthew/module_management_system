@@ -54,9 +54,16 @@
                 <td>
                   <div class="btn-group">
                     {{-- {{ route('groups.edit', $group->id) }} --}}
-                    <a href="" class="btn btn-warning btn-sm">
-                      <i class="fas fa-edit"></i>
-                    </a>
+<button 
+    type="button" 
+    class="btn btn-warning btn-sm btn-edit-group"
+    data-id="{{ $group->id }}"
+    data-name="{{ $group->name }}"
+    data-leader="{{ $group->leader_id }}"
+    data-members='@json($group->members->pluck("id"))'>
+  <i class="fas fa-edit"></i>
+</button>
+
                     {{-- {{ route('groups.destroy', $group->id) }} --}}
                     <form action="" method="POST" style="display:inline-block;">
                       @csrf
@@ -84,6 +91,56 @@
     </div>
   </section>
 </div>
+<!-- Edit Group Modal -->
+<div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="editGroupForm" method="POST" action="">
+        @csrf
+        @method('PUT')
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="editGroupModalLabel"><i class="fas fa-edit"></i> Edit Group</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="editGroupId">
+
+          <div class="form-group">
+            <label for="editGroupName">Group Name</label>
+            <input type="text" class="form-control" id="editGroupName" name="group_name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editGroupLeader">Leader</label>
+            <select class="form-control select2" id="editGroupLeader" name="leader" style="width: 100%;">
+              <option value="">Select Leader</option>
+              @foreach($members as $member)
+                <option value="{{ $member->id }}">{{ $member->name }}</option>
+              @endforeach
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editGroupMembers">Members</label>
+            <select class="form-control select2" id="editGroupMembers" name="members[]" multiple style="width: 100%;">
+              @foreach($members as $member)
+                <option value="{{ $member->id }}">{{ $member->name }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 @foreach($groups as $group)
 <div class="modal fade" id="membersModal{{ $group->id }}" tabindex="-1" role="dialog">
@@ -101,7 +158,7 @@
                         <table class="table table-bordered table-hover">
                             <thead class="thead-light">
                                 <tr>
-                                    <th width="50">#</th>
+                                    {{-- <th width="50">#</th> --}}
                                     <th>Member Name</th>
                                     <th>Course</th>
                                     <th width="100">Role</th>
@@ -115,7 +172,7 @@
                                 
                                 @if($leader)
                                 <tr class="table-success leader-row">
-                                    <td><span class="badge badge-success">1</span></td>
+                                    {{-- <td><span class="badge badge-success">1</span></td> --}}
                                     <td>
                                         <strong>{{ $leader->name }}</strong>
                                         <i class="fas fa-crown text-warning ml-1" title="Group Leader"></i>
@@ -129,7 +186,7 @@
                                 
                                 @foreach($otherMembers as $index => $member)
                                 <tr>
-                                    <td><span class="badge badge-primary">{{ $index + 2 }}</span></td>
+                                    {{-- <td><span class="badge badge-primary">{{ $index + 2 }}</span></td> --}}
                                     <td><strong>{{ $member->name }}</strong></td>
                                     <td>{{ $member->course ?? 'Not specified' }}</td>
                                     <td>
@@ -200,6 +257,26 @@ $(document).ready(function() {
                 form.submit();
             }
         });
+    });
+});
+$(document).ready(function() {
+    $('.btn-edit-group').on('click', function() {
+        const id = $(this).data('id');
+        const name = $(this).data('name');
+        const leader = $(this).data('leader');
+        const members = $(this).data('members');
+
+        // Populate modal fields
+        $('#editGroupId').val(id);
+        $('#editGroupName').val(name);
+        $('#editGroupLeader').val(leader).trigger('change');
+        $('#editGroupMembers').val(members).trigger('change');
+
+        // Set the form action dynamically
+        $('#editGroupForm').attr('action', `/groups/${id}`);
+
+        // Show modal
+        $('#editGroupModal').modal('show');
     });
 });
 </script>
