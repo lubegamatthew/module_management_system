@@ -41,7 +41,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ url('/index') }}" class="nav-link">
+                <a href="{{ url('/mygroups/index') }}" class="nav-link">
                 <i class="nav-icon fas fa-users"></i>
                 <p>
                     My Group

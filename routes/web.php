@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\NotesController;
+use App\Http\Controllers\MyGroupController;
 
 Route::middleware('web')->group(function () {
     Route::get('/', [PageController::class, 'login'])->name('login');
@@ -25,5 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/groups/view', [GroupController::class, 'viewGroups'])->name('groups.view');
     Route::put('/groups/{id}', [GroupController::class, 'updateGroup'])->name('groups.update');
 
+    //my groups routes
+    Route::get('/mygroups/index', [MyGroupController::class, 'myGroup'])->name('mygroup');
 });
 
